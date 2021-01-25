@@ -7,7 +7,7 @@ logging.basicConfig(
 )
 
 env = Env()
-env.read_env("../bot.env")
+env.read_env()
 
 TOKEN = env.str("TELEGRAM_TOKEN")
 COIN_API = "https://api.coingecko.com/api/v3/"

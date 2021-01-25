@@ -38,3 +38,5 @@ logging.info("Start bot.")
 updater.start_polling()
 
 job_minute = job_queue.run_repeating(send_price, interval=UPDATE_TIME)
+
+updater.idle()
