@@ -11,21 +11,33 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 
-from coin.ping import ping
-from coin.simple import price
-
-from settings import TOKEN
+from settings import TOKEN, UPDATE_TIME
+from utils.cmd import Command
+from handlers.commands import start
+from handlers.callbacks import supported_currencies
 
 updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 
-dispatcher.add_handler(MessageHandler(Filters.text, ping, run_async=True))
+# dispatcher.add_handler(MessageHandler(Filters.text, ping, run_async=True))
+
+# callbacks
+dispatcher.add_handler(
+    CallbackQueryHandler(
+        supported_currencies,
+        pattern=r"^set_currencies$|^next_currencies$|^previous_currencies$",
+        run_async=True,
+    )
+)
+
+# commands
+dispatcher.add_handler(CommandHandler(Command.START, start, run_async=True))
 
 logging.info("Start bot.")
 updater.start_polling()
 
-schedule.every(10).minutes.do(
-    price, ids=["bitcoin", "ethereum"], currencies=["usd", "eur", "rub"]
+schedule.every(UPDATE_TIME).hours.do(
+    supported_currencies
 )
 
 while True:

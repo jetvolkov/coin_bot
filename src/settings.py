@@ -12,4 +12,6 @@ env.read_env("../bot.env")
 TOKEN = env.str("TELEGRAM_TOKEN")
 COIN_API = "https://api.coingecko.com/api/v3/"
 
-USERS_LIST = ["427927822", "410175779"]
+USERS_LIST = ["427927822"]
+
+UPDATE_TIME = 8
