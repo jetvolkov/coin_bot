@@ -14,4 +14,5 @@ COIN_API = "https://api.coingecko.com/api/v3/"
 
 USERS_LIST = ["427927822"]
 
-UPDATE_TIME = 8
+# time in seconds
+UPDATE_TIME = 28_800
