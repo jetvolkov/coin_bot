@@ -15,4 +15,4 @@ COIN_API = "https://api.coingecko.com/api/v3/"
 USERS_LIST = ["427927822"]
 
 # time in seconds
-UPDATE_TIME = 28_800
+UPDATE_TIME = env.int("UPDATE_TIME")
