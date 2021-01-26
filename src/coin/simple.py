@@ -5,22 +5,21 @@ from babel import numbers
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest, Unauthorized
 
-from utils.txt import Answer
 from settings import COIN_API, USERS_LIST
 
-PRICE_URL = "simple/price"
+PRICE = "simple/price"
 SUPPORTED_CURRENCIES = "simple/supported_vs_currencies"
 
 
 def price(ids: list, currencies: list) -> dict:
-    url = COIN_API + PRICE_URL
+    url = COIN_API + PRICE
     params = {
         "ids": ",".join(ids),
         "vs_currencies": ",".join(currencies),
-        "include_market_cap": "true",
-        "include_24hr_vol": "true",
-        "include_24hr_change": "true",
-        "include_last_updated_at": "true",
+        "include_market_cap": True,
+        "include_24hr_vol": True,
+        "include_24hr_change": True,
+        "include_last_updated_at": True,
     }
     response = httpx.get(url, params=params)
     return response.json()
