@@ -5,7 +5,9 @@ from babel import numbers
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest, Unauthorized
 
-from settings import COIN_API, USERS_LIST
+from settings import db, COIN_API
+from models import Coin, Person
+from peewee import JOIN, IntegrityError
 
 PRICE = "simple/price"
 SUPPORTED_CURRENCIES = "simple/supported_vs_currencies"
@@ -32,22 +34,34 @@ def supported_currencies() -> list:
 
 
 def send_price(context: CallbackContext):
-    coins = price(["bitcoin", "ethereum"], ["usd", "eur", "rub"])
-    txt = str()
-    for coin in coins:
-        txt += "Курс " + coin.upper() + ":\n"
-        for currency in ["usd", "eur", "rub"]:
-            pr = numbers.format_currency(
-                coins[coin][currency],
-                currency.upper(),
-                locale="ru_RU",
-            )
-            txt += f"{currency.upper()}: {pr}\n"
+    try:
+        with db.atomic():
+            user_list = Person.select()
+            logging.warning(user_list)
 
-        txt += "\n"
+        for user in user_list:
+            coins_price = price([coin.coin_id for coin in user.coins], ["usd", "eur", "rub"])
+            txt = str()
+            for coin in coins_price:
+                txt += "Курс " + coin.upper() + ":\n"
+                for currency in ["usd", "eur", "rub"]:
+                    pr = numbers.format_currency(
+                        coins_price[coin][currency],
+                        currency.upper(),
+                        locale="ru_RU",
+                    )
+                    txt += f"{currency.upper()}: {pr}\n"
 
-    for chat_id in USERS_LIST:
-        try:
-            context.bot.send_message(chat_id=chat_id, text=txt)
-        except (BadRequest, Unauthorized) as err:
-            logging.error(f"{str(err)} {chat_id}")
+                txt += "\n"
+
+            logging.info(user)
+            try:
+                context.bot.send_message(chat_id=user.telegram_id, text=txt)
+            except (BadRequest, Unauthorized) as err:
+                logging.error(f"{str(err)} {user.telegram_id}")
+
+    except IntegrityError as err:
+        logging.error(str(err))
+
+
+

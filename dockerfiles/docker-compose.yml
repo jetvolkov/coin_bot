@@ -8,6 +8,17 @@ networks:
         - subnet: 173.0.0.0/24
 
 services:
+  db:
+    image: postgres:13-alpine
+    container_name: coin_db
+    restart: unless-stopped
+    env_file: ../secrets/db.env
+    tty: true
+    volumes:
+      - ../data:/var/lib/postgresql/data
+    networks:
+      - coin
+
   coin:
     image: coin
     container_name: coin
@@ -20,3 +31,5 @@ services:
     tty: true
     networks:
       - coin
+    depends_on:
+      - db

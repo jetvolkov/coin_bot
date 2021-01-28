@@ -5,13 +5,12 @@ from babel import numbers
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest, Unauthorized
 
-from settings import COIN_API, USERS_LIST
+from settings import COIN_API
 
 LIST = "coins/list"
 INFO = "coins/{}"
 TICKERS = "coins/{}/tickers"
 HISTORY = "coins/{}/history"
-
 
 
 def coin_list() -> list:
